@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Optimization: From 45 Minutes to 20 Seconds - The Nguyen Khac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-secondary: #ffffff;
+      --text-primary: #2d2d2d;
+      --text-secondary: #666666;
+      --text-light: #999999;
+      --accent-primary: #d4745a;
+      --accent-secondary: #7a9ea6;
+      --border-color: #e8e4de;
+      --hover-bg: #f5f2ed;
+      --code-bg: #f6f8fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.8;
+      font-size: 18px;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* Container */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-primary);
+    }
+
+    /* Article */
+    article {
+      padding: 4rem 0;
+    }
+
+    .article-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .article-meta {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      margin-bottom: 1rem;
+    }
+
+    .article-intro {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin-top: 1.5rem;
+      line-height: 1.8;
+    }
+
+    /* Content */
+    .article-content p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    .article-content ul,
+    .article-content ol {
+      margin-bottom: 1.5rem;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+
+    .article-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    .article-content strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      border: none;
+    }
+
+    p code {
+      background: var(--code-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    thead {
+      background: var(--hover-bg);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--hover-bg);
+    }
+
+    /* Horizontal rules */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 3rem 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-color);
+      margin-top: 4rem;
+    }
+
+    /* Scroll to Top Button */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      color: var(--accent-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+    }
+
+    .scroll-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scroll-to-top:hover {
+      background: var(--accent-primary);
+      color: var(--bg-secondary);
+      border-color: var(--accent-primary);
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(212, 116, 90, 0.3);
+    }
+
+    /* Images */
+    .article-thumbnail {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .article-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin: 2rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .image-caption {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-style: italic;
+      margin-top: -1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      h3 {
+        font-size: 1.2rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .scroll-to-top {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+      }
+    }
+
+    /* Subtle animations */
+    @media (prefers-reduced-motion: no-preference) {
+
+      a,
+      .scroll-to-top {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="nav-content">
+        <a href="../index.html" class="logo">The Nguyen Khac</a>
+        <ul class="nav-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../index.html#experience">Experience</a></li>
+          <li><a href="../index.html#projects">Projects</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <article>
+      <!-- Article Header -->
+      <header class="article-header">
+        <div class="article-meta">Technical Article • Database Optimization</div>
+        <h1>DATABASE SPEED INCREASED 25 TIMES with just a few simple commands</h1>
+        <img src="../img/db_optimization_thumbnail.png" alt="Database Optimization Thumbnail" class="article-thumbnail">
+        <p class="article-intro">
+          It sounds dramatic, but it's genuinely simple. The truth is, that mistakes like this can happen anywhere.
+          Database optimization is something businesses highly value. Give this a read—you might find it useful
+          somewhere.
+        </p>
+      </header>
+
+      <!-- Article Content -->
+      <div class="article-content">
+        <h2>Background</h2>
+        <p>
+          I took on a project with quite a large dataset. Our system uses <strong>SQL Server Enterprise 2016</strong>
+          with the client being <strong>SQL Server Management Studio 2020</strong>. The data comprises the sales figures
+          of <strong>ALL electronic products</strong>, from <strong>ALL brands</strong>, in <strong>ALL
+            countries/regions</strong>, for <strong>EACH MONTH</strong> from 2007 to now. With such a dataset, slow
+          queries were <strong>INEVITABLE</strong>. Here's the situation:
+        </p>
+
+        <pre><code>SELECT * FROM &lt;TABLE&gt;
+WHERE 1 = 1
+AND NationCode = 'XX'
+AND ProductCode = 'YY' 
+AND Period like '20xx%'</code></pre>
+
+        <p>
+          The query looks simple, but it took about <strong>25–30 minutes</strong> to get results. For more complex
+          nested queries with ordering for report screens, it took about <strong>45 minutes</strong> to process.
+        </p>
+
+        <p>
+          Looking at databases in other projects, I saw many larger databases running much faster. That's when I
+          realized something was wrong with my database. So, I started investigating.
+        </p>
+
+        <hr>
+
+        <h2>I. INVESTIGATION</h2>
+
+        <h3>1. Checking Database Settings</h3>
+        <p>
+          After tracing the report screens, I found stored procedures corresponding to each screen. Each procedure had a
+          simple query with 3 parameters like the one mentioned above. Since the query was simple, I didn't look there
+          for the issue. Instead, I checked the database settings (under Options in Database Properties):
+        </p>
+
+        <ul>
+          <li><strong>Auto Create Statistics</strong>: True</li>
+          <li><strong>Auto Update Statistics</strong>: True</li>
+          <li><strong>Auto Shrink</strong>: False</li>
+        </ul>
+
+        <p>
+          The Auto Shrink setting indicated potential fragmentation issues. I focused on 4 key tables that fed data to
+          the report screens—the critical tables of the system.
+        </p>
+
+        <h3>2. Checking Tables Structure</h3>
+        <ul>
+          <li>No indexes on search fields. Even when indexed, it wasn't effective due to excessive duplication in the
+            search fields.</li>
+          <li>No partitioning, as old data was frequently deleted or updated.</li>
+          <li>Used clustered columnstore indexes for numeric calculations.</li>
+          <li>Tables were compressed using columnstore indexes.</li>
+        </ul>
+
+        <p>
+          The table design seemed fine, but since Auto Shrink wasn't enabled, I decided to check for fragmentation.
+        </p>
+
+        <h3>3. Checking Fragmentation</h3>
+        <p>I used the following command to check:</p>
+
+        <pre><code>DBCC SHOWCONTIG ('TABLE_NAME')</code></pre>
+
+        <p><strong>Results:</strong></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pages Scanned</td>
+              <td>6,196,802</td>
+            </tr>
+            <tr>
+              <td>Extents Scanned</td>
+              <td>779,420</td>
+            </tr>
+            <tr>
+              <td>Extent Switches</td>
+              <td>2,000,302</td>
+            </tr>
+            <tr>
+              <td>Avg. Pages per Extent</td>
+              <td>8.0</td>
+            </tr>
+            <tr>
+              <td><strong>Scan Density</strong></td>
+              <td><strong>38.72%</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Logical Scan Fragmentation</strong></td>
+              <td><strong>20.82%</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Extent Scan Fragmentation</strong></td>
+              <td><strong>50.15%</strong></td>
+            </tr>
+            <tr>
+              <td>Avg. Bytes Free per Page</td>
+              <td>754.8</td>
+            </tr>
+            <tr>
+              <td>Avg. Page Density</td>
+              <td>90.67%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The three fragmentation metrics were <strong>ALARMINGLY HIGH</strong>. Essentially, SQL Server was scanning
+          far too many underfilled pages, leading to inefficiencies.
+        </p>
+
+        <p>
+          <strong>Diagnosis:</strong> The critical tables were <strong>SEVERELY FRAGMENTED</strong>.
+        </p>
+
+        <hr>
+
+        <h2>II. TESTING</h2>
+        <p>
+          This alone wasn't enough to convince management, who believed the system was unfixable. I needed a test
+          environment to prove my point. Luckily, I had a server to test on (same SQL Server version).
+        </p>
+
+        <p>I replicated the tables with the same structure and imported the entire dataset.</p>
+
+        <h3>1. Observation:</h3>
+        <p>
+          On the test server, the data only occupied <strong>29GB</strong>, compared to <strong>360GB</strong> in
+          production—a <strong>12x reduction</strong>.
+        </p>
+
+        <h3>2. Query performance comparison:</h3>
+        <ul>
+          <li><strong>Production:</strong> 21:28</li>
+          <li><strong>Test:</strong> 2:51</li>
+        </ul>
+
+        <h3>3. Data density comparison:</h3>
+        <ul>
+          <li><strong>Production:</strong> 38.72%</li>
+          <li><strong>Test:</strong> 97.56%</li>
+        </ul>
+
+        <p>
+          These results, along with disk usage metrics, formed the basis for my proposal to the manager.
+        </p>
+
+        <hr>
+
+        <h2>III. IMPLEMENTATION</h2>
+
+        <h3>1. Preparation</h3>
+        <ul>
+          <li>Suspend all data modifications (insert/update/delete).</li>
+          <li>Back up data according to the <strong>3-2-1-0-0 principle</strong>: full database snapshot, and table
+            backups on both the dev and production servers.</li>
+          <li>Schedule the operation for the weekend to minimize client impact.</li>
+          <li>Notify clients about the downtime.</li>
+        </ul>
+
+        <h3>2. Execution</h3>
+        <p>Truncate the tables, reload the data, and validate at every step:</p>
+
+        <ol>
+          <li>Load raw data.</li>
+          <li>Verify report screens.</li>
+          <li>Check data exports to other systems.</li>
+        </ol>
+
+        <p>If any issue arose, the data must be restored (thankfully, there were no problems).</p>
+
+        <hr>
+
+        <h2>IV. RESULTS</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Before</th>
+              <th>After</th>
+              <th>Improvement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Query Time</strong></td>
+              <td>21:28</td>
+              <td>0:20</td>
+              <td><strong>60x faster</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Disk Usage</strong></td>
+              <td>360 GB</td>
+              <td>29 GB</td>
+              <td><strong>92% reduction</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Scan Density</strong></td>
+              <td>38.72%</td>
+              <td>97.56%</td>
+              <td><strong>2.5x improvement</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <img src="../img/db_optimization_result.png" alt="Database Optimization Results">
+        <p class="image-caption">Visual comparison of query performance before and after optimization</p>
+
+        <hr>
+
+        <h2>V. CONCLUSION</h2>
+        <p>The key takeaway here is:</p>
+
+        <ol>
+          <li><strong>Finding the RIGHT issue to fix is crucial.</strong></li>
+          <li><strong>Even small actions can drastically improve system performance.</strong></li>
+          <li><strong>No matter how experienced someone is, always validate your assumptions.</strong></li>
+        </ol>
+      </div>
+    </article>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">↑</button>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>© 2025 The Nguyen Khac. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll to top button functionality
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', function () {
+      if (window.pageYOffset > 300) {
+        scrollToTopBtn.classList.add('visible');
+      } else {
+        scrollToTopBtn.classList.remove('visible');
+      }
+    });
+
+    // Scroll to top when button is clicked
+    scrollToTopBtn.addEventListener('click', function () {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+</body>
+
+</html>
