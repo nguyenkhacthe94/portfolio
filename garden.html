@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Garden - The Nguyen Khac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <!-- Markdown parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -36,7 +39,12 @@
             font-size: 18px;
         }
 
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'DM Sans', sans-serif;
             line-height: 1.3;
             font-weight: 700;
@@ -228,6 +236,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -382,7 +391,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Empty state */
@@ -440,6 +451,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav>
@@ -532,7 +544,7 @@
                 if (!response.ok) {
                     throw new Error('Could not load posts index');
                 }
-                
+
                 const postsIndex = await response.json();
                 allPosts = postsIndex.posts || [];
 
@@ -553,7 +565,7 @@
         // Render posts
         function renderPosts() {
             document.getElementById('loading').style.display = 'none';
-            
+
             // Featured posts (latest 3)
             const featuredPosts = allPosts.slice(0, 3);
             const featuredContainer = document.getElementById('featured-posts');
@@ -572,15 +584,17 @@
         // Create post card HTML
         function createPostCard(post) {
             const formattedDate = formatDate(post.date);
+            // Convert .md filename to .html
+            const htmlFile = post.file.replace('.md', '.html');
             return `
-                <div class="post-card" onclick="openPost('${post.file}', '${post.title}', '${post.date}', '${post.thumbnail}')">
+                <a href="posts/${htmlFile}" class="post-card" style="text-decoration: none; color: inherit;">
                     <img src="${post.thumbnail}" alt="${post.title}" class="post-thumbnail" onerror="this.src='img/placeholder.jpg'">
                     <div class="post-content">
                         <div class="post-date">${formattedDate}</div>
                         <h3 class="post-title">${post.title}</h3>
                         ${post.excerpt ? `<p class="post-excerpt">${post.excerpt}</p>` : ''}
                     </div>
-                </div>
+                </a>
             `;
         }
 
@@ -592,21 +606,21 @@
                 if (!response.ok) {
                     throw new Error('Could not load post');
                 }
-                
+
                 let content = await response.text();
-                
+
                 // Remove frontmatter if present
                 content = content.replace(/^---[\s\S]*?---\n/, '');
-                
+
                 // Parse markdown to HTML
                 const htmlContent = marked.parse(content);
-                
+
                 // Update modal
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-date').textContent = formatDate(date);
                 document.getElementById('modal-thumbnail').src = thumbnail;
                 document.getElementById('modal-article').innerHTML = htmlContent;
-                
+
                 // Show modal
                 document.getElementById('modal').classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -639,10 +653,10 @@
         // Format date
         function formatDate(dateString) {
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
         }
 
@@ -653,4 +667,5 @@
         }
     </script>
 </body>
+
 </html>
