@@ -1,6 +1,6 @@
 # Database Optimization: From 45 Minutes to 20 Seconds
 
-It sounds dramatic, but it's genuinely simple. The truth is, that mistakes like this can happen anywhere. Database optimization is something businesses highly value. Give this a read—you might find it useful somewhere.
+It sounds dramatic, but it's genuinely simple. The truth is that mistakes like this can happen anywhere. Database optimization is something businesses highly value. Give this a read—you might find it useful somewhere.
 
 ## Background
 
@@ -75,7 +75,7 @@ This alone wasn't enough to convince management, who believed the system was unf
 
 I replicated the tables with the same structure and imported the entire dataset.
 
-### 1. Observation:
+### 1. Observation
 On the test server, the data only occupied **29GB**, compared to **360GB** in production—a **12x reduction**.
 
 ### 2. Query performance comparison:
@@ -107,7 +107,7 @@ Truncate the tables, reload the data, and validate at every step:
 2. Verify report screens.
 3. Check data exports to other systems.
 
-If any issue arose, the data must be restored (thankfully, there were no problems).
+If any issue arose, the data would need to be restored (thankfully, there were no problems).
 
 ---
 
