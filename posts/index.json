@@ -1,18 +1,18 @@
 {
-  "posts": [
-    {
-      "title": "DATABASE SPEED INCREASED 25 TIMES with just a few simple commands",
-      "file": "database_optimization.md",
-      "date": "2025-12-10",
-      "thumbnail": "../img/db_optimization_thumbnail.png",
-      "excerpt": "How I optimized a severely fragmented database and reduced query time from 45 minutes to 20 seconds - a 60x performance improvement."
-    },
-    {
-      "title": "The 3-2-1-1-0 Backup Rule: Protecting Your Most Valuable Asset",
-      "file": "32110_backup_rule.md",
-      "date": "2025-12-11",
-      "thumbnail": "../img/32110_backup_thumbnail.png",
-      "excerpt": "A comprehensive guide to protecting your data with the 3-2-1-1-0 backup strategy - ensuring multiple layers of protection against data loss."
-    }
-  ]
+    "posts": [
+        {
+            "title": "DATABASE SPEED INCREASED 25 TIMES with just a few simple commands",
+            "file": "database_optimization.md",
+            "date": "2025-12-10",
+            "thumbnail": "img/db_optimization_thumbnail.png",
+            "excerpt": "How I optimized a severely fragmented database and reduced query time from 45 minutes to 20 seconds - a 60x performance improvement."
+        },
+        {
+            "title": "The 3-2-1-1-0 Backup Rule: Protecting Your Most Valuable Asset",
+            "file": "32110_backup_rule.md",
+            "date": "2025-12-11",
+            "thumbnail": "img/32110_backup_thumbnail.png",
+            "excerpt": "A comprehensive guide to protecting your data with the 3-2-1-1-0 backup strategy - ensuring multiple layers of protection against data loss."
+        }
+    ]
 }
