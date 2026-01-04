@@ -123,6 +123,31 @@
             margin: 0 auto;
         }
 
+        /* Search */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-family: 'DM Sans', sans-serif;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(212, 116, 90, 0.15);
+        }
+
         /* Featured Posts */
         .featured-section {
             margin: 4rem 0;
@@ -478,6 +503,11 @@
             </p>
         </div>
 
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search posts by title...">
+        </div>
+
         <!-- Loading State -->
         <div id="loading" class="loading">
             <div class="loading-spinner"></div>
@@ -533,8 +563,14 @@
         let allPosts = [];
 
         // Initialize
+        // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             await loadPosts();
+
+            // Search listener
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                handleSearch(e.target.value);
+            });
         });
 
         // Load posts from index.json
@@ -563,22 +599,67 @@
         }
 
         // Render posts
-        function renderPosts() {
+        function renderPosts(postsToRender = allPosts) {
             document.getElementById('loading').style.display = 'none';
 
-            // Featured posts (latest 2)
-            const featuredPosts = allPosts.slice(0, 2);
-            const featuredContainer = document.getElementById('featured-posts');
-            featuredContainer.innerHTML = featuredPosts.map(post => createPostCard(post)).join('');
-            document.getElementById('featured-section').style.display = 'block';
+            const searchInput = document.getElementById('search-input');
+            const isSearching = searchInput.value.trim().length > 0;
 
-            // All posts
-            // All posts
-            if (allPosts.length > 0) {
+            if (isSearching) {
+                // Hide featured section when searching
+                document.getElementById('featured-section').style.display = 'none';
+
                 const allPostsContainer = document.getElementById('all-posts');
-                allPostsContainer.innerHTML = allPosts.map(post => createPostCard(post)).join('');
-                document.getElementById('all-posts-section').style.display = 'block';
+                const emptyState = document.getElementById('empty-state');
+
+                if (postsToRender.length > 0) {
+                    allPostsContainer.innerHTML = postsToRender.map(post => createPostCard(post)).join('');
+                    document.getElementById('all-posts-section').style.display = 'block';
+                    emptyState.style.display = 'none';
+                } else {
+                    document.getElementById('all-posts-section').style.display = 'none';
+                    emptyState.style.display = 'block';
+                    emptyState.querySelector('h3').textContent = 'No posts found';
+                    emptyState.querySelector('p').textContent = 'Try using different keywords.';
+                }
+            } else {
+                // Normal view
+                document.getElementById('empty-state').style.display = 'none';
+
+                // Featured posts (latest 2)
+                const featuredPosts = allPosts.slice(0, 2);
+                const featuredContainer = document.getElementById('featured-posts');
+                featuredContainer.innerHTML = featuredPosts.map(post => createPostCard(post)).join('');
+                document.getElementById('featured-section').style.display = 'block';
+
+                // All posts
+                if (allPosts.length > 0) {
+                    const allPostsContainer = document.getElementById('all-posts');
+                    allPostsContainer.innerHTML = allPosts.map(post => createPostCard(post)).join('');
+                    document.getElementById('all-posts-section').style.display = 'block';
+                }
             }
+        }
+
+        // Handle search
+        function handleSearch(query) {
+            const searchTerm = query.toLowerCase().trim();
+
+            if (searchTerm === '') {
+                // Reset empty state text
+                const emptyState = document.getElementById('empty-state');
+                emptyState.querySelector('h3').textContent = 'No posts yet';
+                emptyState.querySelector('p').textContent = 'Posts will appear here once you add them to the /posts folder.';
+
+                renderPosts(allPosts);
+                return;
+            }
+
+            const filteredPosts = allPosts.filter(post =>
+                post.title.toLowerCase().includes(searchTerm)
+            );
+
+            renderPosts(filteredPosts);
         }
 
         // Create post card HTML
