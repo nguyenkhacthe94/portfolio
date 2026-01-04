@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COUNT(1) and COUNT(*) in SQL Server - The Nguyen Khac</title>
+    <title>COUNT() function in SQL Server (Part 2) - The Nguyen Khac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -385,60 +385,75 @@
             <!-- Article Header -->
             <header class="article-header">
                 <div class="article-meta">Technical Article • SQL Server</div>
-                <h1>COUNT(1) and COUNT(*) in SQL Server</h1>
-                <img src="../img/count_in_sql_server_thumbnail.png" alt="COUNT(1) and COUNT(*) in SQL Server"
+                <h1>COUNT() function in SQL Server (Part 2)</h1>
+                <img src="../img/count_in_sql_server_thumbnail.png" alt="COUNT() function in SQL Server (Part 2)"
                     class="article-thumbnail">
                 <p class="article-intro">
-                    There is a common myth about COUNT(1) and COUNT(*) that COUNT(1) is faster than COUNT(*), because
-                    the COUNT(*) query scans the whole table, but COUNT(1) does not. Let's check it out.
+                    In the previous article, we together explored the COUNT(1) and COUNT(*) functions. Is there any
+                    difference with COUNT(COLUMN)?
                 </p>
             </header>
 
             <!-- Article Content -->
             <div class="article-content">
-                <p>First, we'll start with the execution plan.</p>
-
-                <img src="../img/count_in_sql_server_1.jfif" alt="Execution Plan">
-                <p class="image-caption">COUNT(1) and COUNT(*)</p>
-
                 <p>
-                    Here you can see that both COUNT(1) and COUNT(*) use the same execution plan. Both have the same
-                    query cost of 50%.
+                    I created a 2-column-table containing 1.000.000 records. 2 columns are: ID (int PK) and VAL
+                    (nvarchar, nullable). Let's dive in!
                 </p>
 
-                <p>Let's check the query profile and I/O by using the below commands:</p>
-
-                <img src="../img/count_in_sql_server_2.png" alt="Query profile check">
-                <p class="image-caption">Query profile check</p>
-
-                <p>Here we have the result:</p>
-
-                <pre><code>SELECT COUNT(*) FROM [Sales].[SalesOrderDetail]
-  |--Compute Scalar(DEFINE:([Expr1002]=CONVERT_IMPLICIT(int,[Expr1003],0)))
-       |--Stream Aggregate(DEFINE:([Expr1003]=Count(*)))
-            |--Index Scan(OBJECT:([AdventureWorks2014].[Sales].[SalesOrderDetail].[IX_SalesOrderDetail_ProductID]))
-
-SELECT COUNT(1) FROM [Sales].[SalesOrderDetail]
-  |--Compute Scalar(DEFINE:([Expr1002]=CONVERT_IMPLICIT(int,[Expr1003],0)))
-       |--Stream Aggregate(DEFINE:([Expr1003]=Count(*)))
-            |--Index Scan(OBJECT:([AdventureWorks2014].[Sales].[SalesOrderDetail].[IX_SalesOrderDetail_ProductID]))</code></pre>
-
+                <h2>COUNT(ID)</h2>
                 <p>
-                    The PROFILE data of both queries shows COUNT(*). That means the SQL engine internally converts
-                    COUNT(1) to COUNT(*). Let's continue with the I/O stats:
+                    COUNT(ID), I mean the COUNT function on the PK column. Let's check if there's any difference in the
+                    execution plan between COUNT(ID), COUNT(1), and COUNT(*).
                 </p>
 
-                <pre><code>Table 'SalesOrderDetail'. Scan count 1, logical reads 276, physical reads 1, 
- read-ahead reads 288, lob logical reads 0, lob physical reads 0, lob read-ahead reads 0.
-
-Table 'SalesOrderDetail'. Scan count 1, logical reads 276, physical reads 0, 
- read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob read-ahead reads 0.</code></pre>
-
-                <p>Both queries read 276 pages.</p>
+                <img src="../img/count_in_sql_server_2_1.png" alt="Execution Plan">
+                <p class="image-caption">Execution Plan</p>
 
                 <p>
-                    Based on the above prooves, we can clearly say with no doubt that, <strong>THERE IS NO DIFFERENCE
-                        BETWEEN COUNT(1) AND COUNT(*).</strong>
+                    We can see that all COUNT(1), COUNT(*), and COUNT(ID) are using the same execution plan. Because
+                    COUNT(1) and COUNT(*) are the same, we'll keep comparing COUNT(1) only to COUNT(ID). The next one is
+                    the query profile.
+                </p>
+
+                <img src="../img/count_in_sql_server_2_2.png" alt="Query profile">
+                <p class="image-caption">Query profile</p>
+
+                <p>
+                    Check the Line number 3 on each result, both queries are defined automatically to COUNT(*). How
+                    about I/O stats?
+                </p>
+
+                <img src="../img/count_in_sql_server_2_3.png" alt="I/O Stats">
+                <p class="image-caption">I/O Stats</p>
+
+                <p>Both queries scanned 3820 pages.</p>
+                <p>Here we have a conclusion that COUNT(1), COUNT(*), or COUNT(PK COLUMN) ARE THE SAME.</p>
+
+                <h2>COUNT(COLUMN)</h2>
+                <p>
+                    What if I try to use the COUNT function on a non-PK column? Let's check the result first.
+                </p>
+
+                <img src="../img/count_in_sql_server_2_4.png" alt="Query result">
+                <p class="image-caption">Query result</p>
+
+                <p>
+                    Why the results are different? If you notice the VAL column data type and value, you'll see that the
+                    column is nullable. And there is 1 null value in that column.
+                </p>
+
+                <img src="../img/count_in_sql_server_2_5.png" alt="Null value count">
+                <p class="image-caption">Null value count</p>
+
+                <p>
+                    This issue makes COUNT(COLUMN) stand out. Because if you do not know whether a column is PK or not,
+                    nullable or not, it's very risky to count the table record amount based on a column. Using
+                    COUNT(fixed_value) or COUNT(*) is much more trustworthy.
+                </p>
+
+                <p>
+                    But if you need to count NOT NULL values from a column, COUNT(COLUMN) is your best choice.
                 </p>
             </div>
         </article>

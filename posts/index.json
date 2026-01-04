@@ -13,6 +13,20 @@
             "date": "2025-12-11",
             "thumbnail": "img/32110_backup_thumbnail.png",
             "excerpt": "A comprehensive guide to protecting your data with the 3-2-1-1-0 backup strategy - ensuring multiple layers of protection against data loss."
+        },
+        {
+            "title": "COUNT(1) and COUNT(*) in SQL Server",
+            "file": "count_in_sql_server.md",
+            "date": "2024-08-24",
+            "thumbnail": "img/count_in_sql_server_thumbnail.png",
+            "excerpt": "A common myth about COUNT(1) and COUNT(*) is that COUNT(1) is faster. Let's verify this using execution plans and I/O statistics."
+        },
+        {
+            "title": "COUNT() function in SQL Server (Part 2)",
+            "file": "count_in_sql_server_part_2.md",
+            "date": "2024-08-24",
+            "thumbnail": "img/count_in_sql_server_thumbnail.png",
+            "excerpt": "Explores the differences between COUNT(1), COUNT(*), and COUNT(COLUMN) in SQL Server, specifically focusing on primary keys vs nullable columns."
         }
     ]
 }
