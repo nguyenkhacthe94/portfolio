@@ -566,17 +566,17 @@
         function renderPosts() {
             document.getElementById('loading').style.display = 'none';
 
-            // Featured posts (latest 3)
-            const featuredPosts = allPosts.slice(0, 3);
+            // Featured posts (latest 2)
+            const featuredPosts = allPosts.slice(0, 2);
             const featuredContainer = document.getElementById('featured-posts');
             featuredContainer.innerHTML = featuredPosts.map(post => createPostCard(post)).join('');
             document.getElementById('featured-section').style.display = 'block';
 
             // All posts
-            if (allPosts.length > 3) {
-                const remainingPosts = allPosts.slice(3);
+            // All posts
+            if (allPosts.length > 0) {
                 const allPostsContainer = document.getElementById('all-posts');
-                allPostsContainer.innerHTML = remainingPosts.map(post => createPostCard(post)).join('');
+                allPostsContainer.innerHTML = allPosts.map(post => createPostCard(post)).join('');
                 document.getElementById('all-posts-section').style.display = 'block';
             }
         }
