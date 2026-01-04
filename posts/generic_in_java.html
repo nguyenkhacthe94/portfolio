@@ -14,20 +14,7 @@
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <div class="nav-content">
-                <a href="../index.html" class="logo">The Nguyen Khac</a>
-                <ul class="nav-links">
-                    <li><a href="../garden.html">Garden</a></li>
-                    <li><a href="../index.html#experience">Experience</a></li>
-                    <li><a href="../index.html#projects">Projects</a></li>
-                    <li><a href="../index.html#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
 
     <div class="container">
         <article>
@@ -139,37 +126,9 @@ KeyValueMgmt&lt;Integer, String&gt; bookKv = new KeyValueMgmt&lt;&gt;(book.getId
         </article>
     </div>
 
-    <!-- Scroll to Top Button -->
-    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">↑</button>
+    <div id="footer-placeholder"></div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>© 2025 The Nguyen Khac. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Scroll to top button functionality
-        const scrollToTopBtn = document.getElementById('scrollToTop');
-
-        // Show/hide button based on scroll position
-        window.addEventListener('scroll', function () {
-            if (window.pageYOffset > 300) {
-                scrollToTopBtn.classList.add('visible');
-            } else {
-                scrollToTopBtn.classList.remove('visible');
-            }
-        });
-
-        // Scroll to top when button is clicked
-        scrollToTopBtn.addEventListener('click', function () {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    </script>
+    <script src="../js/post_layout.js"></script>
 </body>
 
 </html>
