@@ -1,6 +1,6 @@
 # COUNT() function in SQL Server (Part 2)
 
-In the previous article, we together explored the COUNT(1) and COUNT(*) functions. Is there any difference with COUNT(COLUMN)?
+In the [previous article](count_in_sql_server.html), we together explored the COUNT(1) and COUNT(*) functions. Is there any difference with COUNT(COLUMN)?
 
 I created a 2-column-table containing 1.000.000 records. 2 columns are: ID (int PK) and VAL (nvarchar, nullable). Let's dive in!
 
