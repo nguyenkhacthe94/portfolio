@@ -11,11 +11,12 @@ This document outlines the steps taken to convert the "COUNT() function in SQL S
 - Created a new file named `post_title.md`.
 - Inserted the provided text title and body.
 - Replaced the string "Article content" with Markdown image syntax `![Description](../img/image_name.png)` as follows:
-    - 1st occurrence -> `![Execution Plan](../img/post_file_name_1.png)`
-    - 2nd occurrence -> `![Query profile](../img/post_file_name_2.png)`
-    - 3rd occurrence -> `![I/O Stats](../img/post_file_name_3.png)`
-    - 4th occurrence -> `![Query result](../img/post_file_name_4.png)`
-    - 5th occurrence -> `![Null value count](../img/post_file_name_5.png)`
+    - 1st occurrence -> `![1st Alt text](../img/post_file_name_1.png)`
+    - 2nd occurrence -> `![2nd Alt text](../img/post_file_name_2.png)`
+    - 3rd occurrence -> `![3rd Alt text](../img/post_file_name_3.png)`
+    - 4th occurrence -> `![4th Alt text](../img/post_file_name_4.png)`
+    - 5th occurrence -> `![5th Alt text](../img/post_file_name_5.png)`
+- The image extension can be .png or .jpg or .jfif
 - Added Markdown headers (`#`, `##`) to structure the content.
 
 ## 3. HTML File Creation (`posts/post_title.html`)
@@ -40,10 +41,10 @@ This document outlines the steps taken to convert the "COUNT() function in SQL S
 - Added the new post entry to `posts/index.json` to ensure it appears in the blog list.
     ```json
     {
-        "title": "COUNT() function in SQL Server (Part 2)",
-        "file": "count_in_sql_server_part_2.md",
-        "date": "2026-01-04",
-        "thumbnail": "img/count_in_sql_server_thumbnail.png",
-        "excerpt": "Explores the differences between COUNT(1), COUNT(*), and COUNT(COLUMN) in SQL Server..."
+        "title": "Post Title. E.g: COUNT() function in SQL Server (Part 2)",
+        "file": "post_file_name.md",
+        "date": "Post Date. E.g: 2026-01-04",
+        "thumbnail": "img/post_file_name_thumbnail.png",
+        "excerpt": "Post excerpt. E.g: Explores the differences between COUNT(1), COUNT(*), and COUNT(COLUMN) in SQL Server..."
     }
     ```

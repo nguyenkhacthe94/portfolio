@@ -27,6 +27,20 @@
             "date": "2024-08-24",
             "thumbnail": "img/count_in_sql_server_thumbnail.png",
             "excerpt": "Explores the differences between COUNT(1), COUNT(*), and COUNT(COLUMN) in SQL Server, specifically focusing on primary keys vs nullable columns."
+        },
+        {
+            "title": "Generic in Java",
+            "file": "generic_in_java.md",
+            "date": "2024-09-12",
+            "thumbnail": "img/generic_in_java_thumbnail.jfif",
+            "excerpt": "Generics allow developers to reuse methods with different data types, reducing code duplication and creating cleaner interfaces."
+        },
+        {
+            "title": "Generic in Java (Pt. 2)",
+            "file": "generic_in_java_part_2.md",
+            "date": "2024-10-01",
+            "thumbnail": "img/generic_in_java_thumbnail.jfif",
+            "excerpt": "Exploring how Generics work with Interfaces in Java to remove code duplication while maintaining type safety."
         }
     ]
 }
