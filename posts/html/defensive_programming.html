@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art of Software Design - Defensive Programming - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">Software Design • Best Practices</div>
+                <h1>The Art of Software Design - Defensive Programming</h1>
+                <img src="../../img/defensive_programming_thumbnail.png" alt="Defensive Programming Thumbnail"
+                    class="article-thumbnail">
+                <p class="article-intro">
+                    Programming is an art, and the programmer is an artist. Ensuring your system lands safely when
+                    things go wrong is crucial.
+                </p>
+                <p><em>May 21, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <p>Programming is an art, and the programmer is an artist.</p>
+                <p>Someone said that, not me. But we have to admit that programmers have many things to weigh and
+                    measure when designing a real product. And "Defense" is one of those factors.</p>
+                <p>So what are we "defending" against? Who is attacking? How do we defend? Let's walk through this
+                    together to answer these questions.</p>
+
+                <h2>1. Defending against Bad Input</h2>
+                <p>As the name suggests, "Bad input" is data entered poorly, whether intentionally or unintentionally.
+                    For example, someone might purposefully add a single quote (<code>'</code>) or
+                    <code>&lt;script&gt;</code> tag into the input sent to our system. Then suddenly one day, a
+                    "strange" session connects to our database with the highest privileges (system admin), or an
+                    important table vanishes without a trace. "Hackers" out there are as common as roasted peanuts in a
+                    beer hall.</p>
+                <p>So how do we defend?</p>
+                <ul>
+                    <li><strong>Validation</strong>: Always check input data from "users" before saving it to the
+                        system. We (or the system) can't know if that "user" is a real person or some "friend" from a
+                        strange land trying to tamper with our data (until we get called out for data loss, or worse, a
+                        database crash). Better safe than sorry.</li>
+                    <li><strong>ReGex</strong>: For data types with special patterns (UUID, Phone numbers, email...),
+                        use regex to ensure the data doesn't contain "dangerous" elements.</li>
+                    <li><strong>Whitelisting</strong>: If your service doesn't need to "communicate" with everyone
+                        except a specific beloved service, turn on Whitelist mode for that service instead of trying to
+                        Blacklist huge IP ranges. We aren't that free :D</li>
+                </ul>
+
+                <h2>2. Safe landing for all exceptions/errors</h2>
+                <p>Imagine a beautiful day when a user sends a weird request. The system throws an unhandled exception.
+                    And then the backend "crashes". Everything stops, except your phone receiving hundreds of messages
+                    and ringing constantly with calls from subordinates, superiors, clients... That's an occupational
+                    accident, folks.</p>
+                <p>So to ensure "safety is a friend" and minimize bad luck, here are some ways to ensure the system
+                    "lands" safely even if it encounters exceptions or problems:</p>
+                <ul>
+                    <li><strong>Ensure all exceptions are handled</strong>: Try-catch, if-else, validation... We have
+                        many ways to prevent and handle exceptions; no exception should be allowed to stop your system.
+                    </li>
+                    <li><strong>Customize error messages</strong>: Error messages displayed to the end user should
+                        contain just enough information, instead of a long stack trace like a supermarket queue.
+                        Innocent users find it ugly, but a "colleague" on the other side of the battle line could use
+                        that stack trace to attack us back.</li>
+                    <li><strong>Always have a backup plan</strong>: If one beautiful day, our system can't "parry" a
+                        critical attack, at least there's a "shoulder" to lean on: backup. If the system crashes, it
+                        crashes, but at least customer data is still there, so our heads are still on our necks.</li>
+                    <li><strong>Absolutely avoid "unsafe landings" (hard crashes)</strong>: Sometimes our system has to
+                        wait for another service indefinitely. Waiting isn't always happiness, so proactively
+                        <strong>Timeout</strong> when waiting too long. For static resources, proactively check for
+                        existence before "trying" to read the file. And finally, regularly check memory to avoid memory
+                        leaks and overflows.</li>
+                </ul>
+
+                <h2>3. Always grasp the "destiny" of the system</h2>
+                <p>Fancy words aside, simply put: know the system's state in the past and present. Manual is fine,
+                    automated is better. For example:</p>
+                <ul>
+                    <li><strong>Automation test</strong>: A mechanism to help us set up "strict" cases, and let the CI
+                        pipeline check them every time new code is uploaded. By continuously checking edge cases
+                        automatically, we reduce cases that can cause problems. This is also how to ensure a problem
+                        that happened once won't happen again, by adding it to the test case.</li>
+                    <li><strong>Logging</strong>: "Those who turn their backs on history will have to face it again".
+                        Logging is the history of the system, so it should help us know who did what. Ensure your log
+                        files have enough info to easily trace backwards. Having an automatic alert tool on these logs
+                        is even better :D</li>
+                </ul>
+
+                <hr>
+                <p>A "delicious" product will eventually attract prying eyes. After you put your product "on the floor",
+                    it needs to "stand firm" against the waves out there. Wishing you, and your products, always have
+                    "hard legs and soft stones" (resilience), and peace in all things. You can subscribe to my
+                    newsletter to "catch" my next posts.</p>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>
