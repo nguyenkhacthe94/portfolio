@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction - but in Spring Boot - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">Spring Boot • Database</div>
+                <h1>Transaction - but in Spring Boot</h1>
+                <img src="../../img/Spring_Boot_Transaction_thumbnail.jfif" alt="Spring Boot Transaction Thumbnail"
+                    class="article-thumbnail">
+                <p class="article-intro">
+                    Understanding transactions in Spring Boot and how to use the @Transactional annotation effectively.
+                </p>
+                <p><em>November 5, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <p>You might have heard of transactions in banking and ordering. Today, we're gonna do a similar thing,
+                    but in Spring Boot.</p>
+
+                <h2>Transaction in banking</h2>
+                <p>When you transfer your cash from your balance to another one, it's not only 1 action. It's a series
+                    of actions as follows:</p>
+                <ol>
+                    <li>The banking system has to check your balance. If your funds are not enough, the transaction
+                        cannot be performed.</li>
+                    <li>Your available balance will decrease by the transaction amount.</li>
+                    <li>The target account must be reachable. In some cases, your funds will be held for several hours
+                        to wait for the target account to respond.</li>
+                    <li>The transaction amount will then be added to the target account. The transaction is now finished
+                        successfully.</li>
+                    <li>If the target account is unreachable (does not exist or is locked), everything will be rolled
+                        back, and the transaction will be marked as failed.</li>
+                </ol>
+
+                <p>Steps 4 and 5 bring the <strong>"all or nothing"</strong> principle of transaction:</p>
+                <blockquote>
+                    All operations within the transaction must either be completed successfully (committed) or none of
+                    them should take effect (rolled back)
+                </blockquote>
+
+                <h2>ACID - The 4 properties of transactions</h2>
+
+                <h3>Atomicity</h3>
+                <p>A transaction is an all-or-nothing operation. All operations within the transaction must complete
+                    successfully, or none of them do. If any part of the transaction fails, the system rolls back all
+                    changes, returning the database to its state before the transaction began.</p>
+
+                <h3>Consistency</h3>
+                <p>A transaction brings the database from one valid state to another. It must preserve all database
+                    rules, such as constraints and triggers. For example, a transaction that violates a rule (like
+                    creating a negative account balance) will be canceled to maintain database consistency.</p>
+
+                <h3>Isolation</h3>
+                <p>Concurrent transactions should not interfere with each other. The execution of one transaction should
+                    not be affected by the results of another concurrent transaction. This prevents issues like dirty
+                    reads, where a transaction views data that has not yet been committed.</p>
+
+                <h3>Durability</h3>
+                <p>Once a transaction has been successfully committed, its changes are permanent and will survive system
+                    failures, such as power outages. This is typically achieved by writing logs to disk.</p>
+
+                <h2>Transaction in JDBC</h2>
+
+                <img src="../../img/Spring_Boot_Transaction_1.png" alt="Transaction in JDBC">
+                <p class="image-caption">Transaction in JDBC</p>
+
+                <h3>Transaction management in JDBC</h3>
+                <p>In the database, you can "Open" a transaction to temporarily set the AutoCommit to False. But in
+                    JDBC, you'll have to do it manually.</p>
+                <ol>
+                    <li>To start a transaction, you'll have to turn off the AutoCommit feature.</li>
+                    <li>Execute anything you want.</li>
+                    <li>When you're done, finish your transaction by calling the commit method.</li>
+                    <li>If something's wrong, call the rollback method to roll back everything from the start.</li>
+                </ol>
+
+                <p>It's not too hard. But when you need it, you'll have to do lots of repetitive actions
+                    (<code>setAutoCommit(false)</code>, <code>commit()</code>, <code>rollback()</code>). These will be
+                    tangled within your project and bring a big mess.</p>
+                <p>So why don't we just wrap it inside a method or something?</p>
+                <p>Yes. That's how Spring does it.</p>
+
+                <h2>Transaction in Spring</h2>
+                <p>With the <code>@Transactional</code> annotation, you can mark a method as a transaction. Everything
+                    will be automatically performed as we declared above. You won't have to repeat anything.</p>
+                <p><strong>Note</strong>: To use <code>@Transactional</code> in Spring MVC, the
+                    <code>@EnableTransactionManagement</code> must be configured. If you use Spring Boot with
+                    spring-data or spring-tx, the transaction feature will also be enabled automatically.</p>
+
+                <p>For example, we have a simple service like this:</p>
+
+                <img src="../../img/Spring_Boot_Transaction_2.png" alt="Service Interface">
+                <p class="image-caption">Service Interface</p>
+
+                <p>And its implementation:</p>
+
+                <img src="../../img/Spring_Boot_Transaction_3.png" alt="Service Implementation">
+                <p class="image-caption">Service Implementation</p>
+
+                <p>The <code>@Transactional</code> annotation will tell Spring that the <code>updateAuthorName</code>
+                    must be wrapped in a transaction. When the method is called, Spring will then create a proxy object
+                    to wrap the method under a transaction and perform everything automatically. The proxy will then
+                    commit or rollback the actions if it encounters an exception or error. Everything is in the
+                    underground.</p>
+                <p>Spring also provides some additional features for customizing the transactions, including
+                    <strong>Transaction Propagation</strong> and <strong>Exception handling</strong>.</p>
+
+                <h2>Transaction Propagation</h2>
+
+                <h3>REQUIRED</h3>
+                <p>This is the default value of the propagation.</p>
+                <p>If there's any existing transaction, the transaction will be shared. Otherwise, a new one will be
+                    created.</p>
+                <p>Let's reuse the above example. We can use the <code>TransactionAspectSupport</code> to evaluate the
+                    current transaction. Before calling the <code>updateAuthorName</code> method, there's no transaction
+                    (the result is null).</p>
+
+                <img src="../../img/Spring_Boot_Transaction_4.png" alt="Before calling the method">
+                <p class="image-caption">Before calling the method</p>
+
+                <p>After calling the method, a new transaction is created.</p>
+
+                <img src="../../img/Spring_Boot_Transaction_5.png" alt="After calling the method">
+                <p class="image-caption">After calling the method</p>
+
+                <h3>SUPPORTS</h3>
+                <p>This means the existing transaction will be shared. If none, the method will then be executed without
+                    wrapping under any transaction.</p>
+
+                <img src="../../img/Spring_Boot_Transaction_6.png" alt="SUPPORTS">
+                <p class="image-caption">SUPPORTS propagation</p>
+
+                <h3>MANDATORY</h3>
+                <p>MANDATORY requires an in-progress transaction before calling the method. Otherwise, an exception is
+                    triggered.</p>
+
+                <img src="../../img/Spring_Boot_Transaction_7.png" alt="IllegalTransactionStateException">
+                <p class="image-caption">IllegalTransactionStateException</p>
+
+                <h3>NEVER</h3>
+                <p>If the method is called under a transaction, an exception is thrown.</p>
+
+                <h3>NOT_SUPPORTED</h3>
+                <p>Stop all the existing transactions and execute the method without wrapping it under any transaction.
+                </p>
+
+                <h3>REQUIRES_NEW</h3>
+                <p>Always create a new transaction to wrap the method. If the call is under a transaction, the outer
+                    transaction is then paused to perform the inner transaction. The inner one will be executed
+                    independently of the outer one. After the inner transaction is finished, the outer one is continued.
+                </p>
+
+                <img src="../../img/Spring_Boot_Transaction_8.png" alt="REQUIRES_NEW">
+                <p class="image-caption">REQUIRES_NEW propagation</p>
+
+                <p>In the above example, the <code>updateAnotherAuthor</code> is called inside the
+                    <code>updateAuthorNameRequireNew</code> method, which is under a transaction. Because the
+                    Propagation is REQUIRES_NEW, it will then execute everything, whether the
+                    <code>updateAuthorNameRequireNew</code> method throws any exceptions or errors.</p>
+
+                <h3>NESTED</h3>
+                <p>If there's no existing transaction, a new one will be created to call the method. Otherwise, Spring
+                    will then create a save point and roll back to it if something's wrong.</p>
+
+                <h2>Exception handling</h2>
+                <p>As mentioned above, if the program encounters exceptions, the transaction will then be rolled back.
+                    But it can be customized by using <code>rollbackFor</code> and <code>noRollbackFor</code>
+                    properties.</p>
+                <p>Based on their names, we can guess their meaning. The <code>rollbackFor</code> is used to customize
+                    the group of exceptions that will trigger the rollback action, while the <code>noRollbackFor</code>
+                    is used oppositely.</p>
+
+                <img src="../../img/Spring_Boot_Transaction_9.png" alt="rollbackFor and noRollbackFor">
+                <p class="image-caption">rollbackFor and noRollbackFor</p>
+
+                <p>In the example above, all of the exceptions will trigger the rollback action, except the
+                    <code>EntityNotFoundException</code>.</p>
+
+                <h2>References</h2>
+                <ul>
+                    <li><a href="https://thorben-janssen.com/transactions-spring-data-jpa/"
+                            target="_blank">https://thorben-janssen.com/transactions-spring-data-jpa/</a></li>
+                    <li><a href="https://www.baeldung.com/transaction-configuration-with-jpa-and-spring"
+                            target="_blank">https://www.baeldung.com/transaction-configuration-with-jpa-and-spring</a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>

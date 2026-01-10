@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "Transaction - but in Spring Boot",
+            "file": "spring_boot_transaction.md",
+            "date": "2025-11-05",
+            "thumbnail": "img/Spring_Boot_Transaction_thumbnail.jfif",
+            "excerpt": "Understanding transactions in Spring Boot and how to use the @Transactional annotation effectively."
+        },
+        {
             "title": "Java Magical: Why 1000 == 1000 is false, but 100 == 100 is true?",
             "file": "java_magical.md",
             "date": "2025-10-28",
