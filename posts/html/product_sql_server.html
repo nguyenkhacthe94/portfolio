@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRODUCT function in SQL Server 2025 - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">SQL Server • Database</div>
+                <h1>PRODUCT function in SQL Server 2025</h1>
+                <img src="../../img/PRODUCT_SQL_Server_thumbnail.jfif" alt="SQL Server PRODUCT Function Thumbnail"
+                    class="article-thumbnail">
+                <p class="article-intro">
+                    Exploring the new PRODUCT aggregate function in SQL Server 2025 and its practical applications.
+                </p>
+                <p><em>December 4, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <p>15 years ago, someone asked this on StackOverflow:</p>
+
+                <img src="../../img/PRODUCT_SQL_Server_1.png" alt="StackOverflow Question">
+                <p class="image-caption">StackOverflow question about PRODUCT function</p>
+
+                <p>I don't know if Microsoft heard this guy's desire, but they DID release the new aggregate PRODUCT
+                    function in SQL Server 2025.</p>
+
+                <h2>PRODUCT()</h2>
+                <p>The PRODUCT() function is similar to SUM() in that it is an aggregate that performs a mathematical
+                    calculation. SUM() works like this. Let's assume I have this table, called <code>dbo.Numbers</code>:
+                </p>
+
+                <pre><code>CREATE TABLE dbo.Numbers
+(
+    n INT
+);
+GO
+INSERT dbo.Numbers
+(
+    n
+)
+VALUES
+(1),
+(2),
+(3),
+(4);</code></pre>
+
+                <p>If I use the SUM function, I'll get the calculation: 1+2+3+4=10. Everyone knows.</p>
+                <p>The PRODUCT function works similarly. The calculation is now 1*2*3*4=24.</p>
+
+                <img src="../../img/PRODUCT_SQL_Server_2.png" alt="PRODUCT Function Example">
+                <p class="image-caption">PRODUCT function example</p>
+
+                <h2>Why do we need this?</h2>
+                <p>There are lots of financial calculations that might require implementing a product-type function. As
+                    an example, suppose that I want to calculate the value of something based on inflation. Suppose I
+                    have the inflation rate for a country each year, and I'm curious about the effect on its currency
+                    over time.</p>
+                <p>I have a table and some data from the UK, which is where Redgate is headquartered.</p>
+
+                <pre><code>CREATE TABLE dbo.Inflation
+(
+    Country CHAR(3),
+    TrackedYear INT,
+    InflationRate NUMERIC(4, 2)
+)
+GO
+INSERT dbo.Inflation
+(
+    Country,
+    TrackedYear,
+    InflationRate
+)
+VALUES
+('UK', 2019, 1.8),
+('UK', 2020, 0.9),
+('UK', 2021, 2.6),
+('UK', 2022, 9.1),
+('UK', 2023, 6.8),
+('UK', 2024, 3.8);</code></pre>
+
+                <p>Suppose I want to know how the yen has changed in value since 2019? Before the PRODUCT function, what
+                    I would do is combine a few functions like this:</p>
+
+                <pre><code>SELECT EXP(SUM(LOG(1 + (inflationRate / 100.0))))
+FROM dbo.Inflation
+WHERE country = 'UK';</code></pre>
+
+                <p>I get a similar result due to rounding, but I'd argue this is much easier to read.</p>
+
+                <img src="../../img/PRODUCT_SQL_Server_3.png" alt="Inflation Calculation">
+                <p class="image-caption">Inflation calculation using PRODUCT</p>
+
+                <h2>PRODUCT Syntax and Usage</h2>
+                <p>According to Microsoft, the syntax is quite simple. There is 1 required parameter, it's the
+                    expression. The ALL and DISTINCT keywords are optional. If you want to use it as a window function,
+                    the OVER keyword is available.</p>
+
+                <img src="../../img/PRODUCT_SQL_Server_4.png" alt="PRODUCT Syntax">
+                <p class="image-caption">PRODUCT function syntax</p>
+
+                <h3>ALL and DISTINCT</h3>
+                <p>ALL is used by default. That means there's no difference between using ALL and not using it. But
+                    there will be if you use the DISTINCT keyword. Now I'll add a new "4" value to the Number table
+                    above, then compare them.</p>
+
+                <img src="../../img/PRODUCT_SQL_Server_5.png" alt="ALL vs DISTINCT">
+                <p class="image-caption">Comparing ALL and DISTINCT</p>
+
+                <p>You can see the difference here. The DISTINCT keyword makes the function return 1*2*3*4=24 instead of
+                    1*2*3*4*4=96. It eliminated the duplicates before calculating.</p>
+
+                <h3>Return Types</h3>
+                <p>The return type is various, based on the expression type. But I expected the return type for int
+                    should be bigint instead of int, as the PRODUCT function makes the value grow so fast and causes
+                    type overflow error. So I truly recommend you guys to convert your int numbers to bigint type before
+                    using this function.</p>
+
+                <h2>Summary</h2>
+                <p>The PRODUCT function is one of the many new features added to SQL Server 2025 that you should have a
+                    look at, especially in financial systems. This will reduce the code complexity and make the queries
+                    easier to read. But you should be careful when using it.</p>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>

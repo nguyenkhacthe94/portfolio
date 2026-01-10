@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "PRODUCT function in SQL Server 2025",
+            "file": "product_sql_server.md",
+            "date": "2025-12-04",
+            "thumbnail": "img/PRODUCT_SQL_Server_thumbnail.jfif",
+            "excerpt": "Exploring the new PRODUCT aggregate function in SQL Server 2025 and its practical applications."
+        },
+        {
             "title": "Transaction - but in Spring Boot",
             "file": "spring_boot_transaction.md",
             "date": "2025-11-05",
