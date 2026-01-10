@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Magical: Why 1000 == 1000 is false, but 100 == 100 is true? - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">Java • Programming Tricks</div>
+                <h1>Java Magical: Why 1000 == 1000 is false, but 100 == 100 is true?</h1>
+                <img src="../../img/java_magical_thumbnail.jfif" alt="Java Magical Thumbnail" class="article-thumbnail">
+                <p class="article-intro">
+                    Discover the surprising behavior of Java's Integer caching and how it affects object comparison.
+                </p>
+                <p><em>October 28, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <p>We'll start with the following code:</p>
+                <pre><code>Integer a = 1000, b = 1000; 
+System.out.println(a == b); //A
+Integer c = 100, d = 100; 
+System.out.println(c == d); //B</code></pre>
+
+                <p>Then, please choose one of the following results:</p>
+                <ul>
+                    <li><strong>A.</strong> Line A is true, line B is true</li>
+                    <li><strong>B.</strong> Line A is true, line B is false</li>
+                    <li><strong>C.</strong> Line A is false, line B is true</li>
+                    <li><strong>D.</strong> Line A is false, line B is false</li>
+                </ul>
+
+                <p>Without reading the title, most of you would likely choose A or D. You must be very drunk to choose
+                    B. Congrats if you choose D, you learnt enough theories. If you choose A, you might know about the
+                    wrapper. But here is the result:</p>
+                <pre><code>false
+true</code></pre>
+
+                <p>This means "a" and "b" are pointing to different objects. "c" and "d" are pointing to the same
+                    object.</p>
+
+                <h2>But WHY?</h2>
+                <p>Let's take a look at the <code>Integer.java</code> class (<a
+                        href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html" target="_blank">Java 8
+                        Documentation</a>). We'll find the following quote at the <code>valueOf</code> method:</p>
+
+                <blockquote>
+                    Returns an Integer instance representing the specified int value. If a new Integer instance is not
+                    required, this method should generally be used in preference to the constructor Integer(int), as
+                    this method is likely to yield significantly better space and time performance by caching frequently
+                    requested values. This method will always cache values in the range -128 to 127, inclusive, and may
+                    cache other values outside of this range.
+                </blockquote>
+
+                <p>This means if you create a variable like this:</p>
+                <pre><code>Integer a = 100;</code></pre>
+
+                <p>It will be declared like this:</p>
+                <pre><code>Integer a = Integer.valueOf(100);</code></pre>
+
+                <p>Let's take a look at the <code>valueOf</code> method:</p>
+                <pre><code>public static Integer valueOf(int i) {  
+    if (i >= IntegerCache.low && i <= IntegerCache.high)  
+        return IntegerCache.cache[i + (-IntegerCache.low)];  
+    return new Integer(i);  
+}</code></pre>
+
+                <p>It uses the <code>IntegerCache</code> class to create an array of integer numbers to cache. If you
+                    create an Integer value inside the cache range, it will then return you the cached one instead of
+                    creating a new one. It does make sense because in the range of Integer numbers, the values from -128
+                    to 127 are used the most, so they chose that range to cache. This will help the program save memory.
+                </p>
+
+                <p>Below is the <code>IntegerCache</code>:</p>
+                <pre><code>private static class IntegerCache {  
+    static final int low = -128;  
+    static final int high;  
+    static final Integer cache[];  
+
+    static {  
+        // high value may be configured by property  
+        int h = 127;  
+        String integerCacheHighPropValue =  
+            sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");  
+        if (integerCacheHighPropValue != null) {  
+            try {  
+                int i = parseInt(integerCacheHighPropValue);  
+                i = Math.max(i, 127);  
+                // Maximum array size is Integer.MAX_VALUE  
+                h = Math.min(i, Integer.MAX_VALUE - (-low) -1);  
+            } catch( NumberFormatException nfe) {  
+                // If the property cannot be parsed into an int, ignore it.  
+            }  
+        }  
+        high = h;  
+
+        cache = new Integer[(high - low) + 1];  
+        int j = low;  
+        for(int k = 0; k < cache.length; k++)  
+            cache[k] = new Integer(j++);  
+
+        // range [-128, 127] must be interned (JLS7 5.1.7)  
+        assert IntegerCache.high >= 127;  
+    }  
+
+    private IntegerCache() {}  
+}</code></pre>
+
+                <h2>A Tricky Example Using Reflection</h2>
+                <p>And with this <code>IntegerCache</code> class, we can create some tricky things using Reflection:</p>
+                <pre><code>public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
+    Class cache = Integer.class.getDeclaredClasses()[0]; //1
+    Field myCache = cache.getDeclaredField("cache"); //2
+    myCache.setAccessible(true);//3
+
+    Integer[] newCache = (Integer[]) myCache.get(cache); //4
+    newCache[132] = newCache[133]; //5
+
+    int a = 2;
+    int b = a + a;
+
+    System.out.printf("%d + %d = %d", a, a, b); 
+}</code></pre>
+
+                <p>Run the above code, and we'll see this result:</p>
+                <pre><code>2 + 2 = 5</code></pre>
+
+                <p>Here is the explanation:</p>
+                <ol>
+                    <li>We use the ReflectionAPI to create a doppelganger of the <code>IntegerCache</code> class.</li>
+                    <li>We create a field named "myCache" that refers to the "cache[]" field inside the
+                        <code>IntegerCache</code> class.</li>
+                    <li>We change the accessibility of the "myCache".</li>
+                    <li>We get the cache array. It's the array from -128 to 127.</li>
+                    <li>We change the index 132 (the cell that has the value of 4) to index 133 (the cell that has the
+                        value of 5).</li>
+                </ol>
+
+                <p>When we perform the <code>2+2</code>, it'll find the index 132 in the array, and return the modified
+                    value as 5.</p>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>

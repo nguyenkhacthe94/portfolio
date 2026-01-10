@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "Java Magical: Why 1000 == 1000 is false, but 100 == 100 is true?",
+            "file": "java_magical.md",
+            "date": "2025-10-28",
+            "thumbnail": "img/java_magical_thumbnail.jfif",
+            "excerpt": "Discover the surprising behavior of Java's Integer caching and how it affects object comparison."
+        },
+        {
             "title": "Get rid of deprecated Services and RestControllers in SpringBoot, why and how?",
             "file": "spring_data_rest.md",
             "date": "2025-07-27",
