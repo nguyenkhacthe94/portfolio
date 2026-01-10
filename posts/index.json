@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "How can parameters stop SQL injection?",
+            "file": "parameters_prevent_sql_injection.md",
+            "date": "2025-05-22",
+            "thumbnail": "img/Parameter_prevents_SQL_Injection_thumbnail.png",
+            "excerpt": "Understanding why parameterization and stored procedures effectively prevent SQL injection attacks."
+        },
+        {
             "title": "The Art of Software Design - Defensive Programming",
             "file": "defensive_programming.md",
             "date": "2025-05-21",

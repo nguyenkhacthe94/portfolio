@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How can parameters stop SQL injection? - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">Database Security • SQL</div>
+                <h1>How can parameters stop SQL injection?</h1>
+                <img src="../../img/Parameter_prevents_SQL_Injection_thumbnail.png"
+                    alt="SQL Injection Prevention Thumbnail" class="article-thumbnail">
+                <p class="article-intro">
+                    Understanding why parameterization and stored procedures effectively prevent SQL injection attacks.
+                </p>
+                <p><em>May 22, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <p>I've heard so many interviews in which the interviewers often ask about "How to stop the SQL
+                    injection," and the interviewees always answer the same thing: "Just parameterize the input or use
+                    the Stored Procedure." But most of them are speechless if they're asked, "Why can parameterization
+                    and stored procedures stop the SQLi?". Today, we'll answer that question.</p>
+
+                <h2>Why can parameters stop SQL injection?</h2>
+
+                <h3>1. What is SQL injection?</h3>
+                <p>Let's say you have a query to check for the user's authentication, like the following:</p>
+                <pre><code>string query = "SELECT * FROM users WHERE account = '" + username + "' AND password = '" + password + "'";</code></pre>
+
+                <p>SQL injection means injecting a query into the request, as the simplest way is to inject it into the
+                    input fields. So a simple SQL injection would be just to put the "username" in as:</p>
+                <pre><code>username = "' OR 1 = 1 --";</code></pre>
+
+                <p>This would effectively make the SQL query:</p>
+                <pre><code>query = "SELECT * FROM users WHERE account = '' OR 1 = 1 --AND password = ''";</code></pre>
+
+                <p>Because <code>1 = 1</code> is always true, the <code>--</code> commented out the rest of the query.
+                    This way will give the hacker access to the system, WITHOUT ANY AUTHENTICATION. Furthermore, the
+                    very first user of the users table can be the admin. So, the hacker is granted the highest privilege
+                    in the system.</p>
+
+                <h3>2. What is Parameterization?</h3>
+                <p>Let's change the above query a little bit:</p>
+                <pre><code>string query = "SELECT * FROM users WHERE account = ? AND password = ?";
+parameters.Add("averyniceaccount", 1);
+parameters.Add("asecuredpassword", 2);</code></pre>
+
+                <p>This way, the input values are treated as query parameters, not a part of the query. It's the same
+                    with the Stored Procedure.</p>
+                <pre><code>CREATE STORED PROCEDURE user_authentication (
+IN v_username VARCHAR(100),
+IN v_password VARCHAR(100)
+)
+BEGIN
+    SELECT * FROM users WHERE account = v_username AND password = v_password;
+END</code></pre>
+
+                <p>But maybe you would disagree with me here.</p>
+                <blockquote>
+                    The parameters will be concatenated to the query string anyway. It doesn't make sense!
+                </blockquote>
+                <p>Yeah, I thought the same when I was so young and tried to be a stupid genius. Let me tell you why.
+                </p>
+
+                <h3>3. How does the database treat the parameterized queries?</h3>
+
+                <h4>a. The query cache</h4>
+                <p><strong>Notice</strong>: In the example below, I'll work with SQL Server. There will be similar
+                    things in MySQL, OracleDB, or PostgreSQL.</p>
+
+                <p>There is a thing called Query hash in the database. In SQL Server, you can check out the query hash
+                    by using the following query:</p>
+                <pre><code>SELECT  TOP 1000  s.creation_time,
+  s.last_execution_time,
+  s.execution_count,
+  sql_text.text,
+  sql_plan.query_plan, query_hash
+FROM sys.dm_exec_query_stats as s 
+CROSS APPLY sys.dm_exec_sql_text(s.sql_handle) as sql_text
+CROSS APPLY sys.dm_exec_query_plan(s.plan_handle) as sql_plan</code></pre>
+
+                <p>Each query has a different hash value. But you can see that it also stores the execution plan.
+                    Because the database is very lazy, it does not want to recalculate the execution plan if there's no
+                    change in the query. That's why you'll see a query can be very slow when executed for the first
+                    time, but then it's executed much faster.</p>
+
+                <img src="../../img/Parameter_prevents_SQL_Injection_1.png"
+                    alt="How Databases use the cached execution plan">
+                <p class="image-caption">How Databases use the cached execution plan</p>
+
+                <p>Different queries have different hash values. That means the following queries have different hash
+                    values and cannot reuse the execution plan from the other one:</p>
+                <pre><code>SELECT * FROM dbo.Organizations WHERE Id = '1eb*******';
+
+SELECT * FROM dbo.Organizations WHERE Id = '1cc*******';</code></pre>
+
+                <h4>b. The parameters</h4>
+                <p>I will change the above query a little bit:</p>
+                <pre><code>DECLARE @orgId VARCHAR(100);
+SET @orgId = '1cc*******';
+SELECT * FROM [dbo].[Organizations] WHERE [Id]=@orgId;
+SET @orgId = '1eb*******';
+SELECT * FROM [dbo].[Organizations] WHERE [Id]=@orgId;</code></pre>
+
+                <p>And then check the cache, there is ONLY 1 HASH value for both queries. That means the query does not
+                    change. Only the parameters changed.</p>
+
+                <h4>c. So what?</h4>
+                <p>The above example shows that the Database separated the query and the parameters. It executes the
+                    query first, then the parameter is added to the query as the value, not string concatenation. This
+                    way, any injected queries won't be executed. Or in other words, <strong>PARAMETERIZATION STOPPED THE
+                        SQL INJECTION</strong>.</p>
+
+                <h3>4. Conclusion</h3>
+                <p>This is how parameterizations (PreparedStatement, StoredProcedure, etc) stop the SQL injection. But
+                    there are many other ways to attack the database out there. XSS is one of them, and parameterization
+                    cannot defend against it. There should be some more defense layers, such as RegEx, Data validation,
+                    etc, to protect your system.</p>
+
+                <p>Subscribe to my newsletter to read more about technical news and sharing, and if you have any
+                    ideas/advice for me, leave them in the comment section :D</p>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>

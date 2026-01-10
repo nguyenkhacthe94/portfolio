@@ -3,9 +3,10 @@
 This document outlines the steps taken to convert the "COUNT() function in SQL Server (Part 2)" content into Markdown and HTML formats.
 
 ## 1. Preparation
-- **Image Verification**: Checked `img/` directory to ensure all required images existed:
-    - `post_file_name_x.png`
-    - `post_file_name_thumbnail.png`
+- **Image Verification**: Check `img/` directory to ensure all required images exist:
+    - `post_file_name_x.png` (or .jpg, .jfif, .webp, .jpeg)
+    - `post_file_name_thumbnail.png` (or .jpg, .jfif, .webp, .jpeg)
+- **Thumbnail Generation**: If the thumbnail does not exist in the `img/` directory, generate a new image using the image generation tool. The image extension can be png, jfif, webp, or jpeg (jpg).
 
 ## 2. Markdown File Creation (`posts/md/post_title.md`)
 - Created a new file named `post_title.md` in `posts/md/`.
