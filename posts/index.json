@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "The Twelve-Factor App",
+            "file": "12_factor_app.md",
+            "date": "2025-02-24",
+            "thumbnail": "img/12_factor_app_thumbnail.png",
+            "excerpt": "A methodology for building software-as-a-service apps that are portable, scalable, and maintainable."
+        },
+        {
             "title": "How I Use Codegen LLMs to Build Projects",
             "file": "how_i_use_codegen_llms.md",
             "date": "2025-02-23",
