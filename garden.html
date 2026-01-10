@@ -668,7 +668,7 @@
             // Convert .md filename to .html
             const htmlFile = post.file.replace('.md', '.html');
             return `
-                <a href="posts/${htmlFile}" class="post-card" style="text-decoration: none; color: inherit;">
+                <a href="posts/html/${htmlFile}" class="post-card" style="text-decoration: none; color: inherit;">
                     <img src="${post.thumbnail}" alt="${post.title}" class="post-thumbnail" onerror="this.src='img/placeholder.jpg'">
                     <div class="post-content">
                         <div class="post-date">${formattedDate}</div>
@@ -683,7 +683,7 @@
         async function openPost(file, title, date, thumbnail) {
             try {
                 // Fetch markdown content
-                const response = await fetch(`posts/${file}`);
+                const response = await fetch(`posts/md/${file}`);
                 if (!response.ok) {
                     throw new Error('Could not load post');
                 }

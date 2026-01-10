@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "How I Use Codegen LLMs to Build Projects",
+            "file": "how_i_use_codegen_llms.md",
+            "date": "2025-02-23",
+            "thumbnail": "img/How_I_use_LLM_to_build_projects.jfif",
+            "excerpt": "A workflow for using reasoning models to plan and codegen models to build projects in 15 minutes."
+        },
+        {
             "title": "DATABASE SPEED INCREASED 25 TIMES with just a few simple commands",
             "file": "database_optimization.md",
             "date": "2025-12-10",

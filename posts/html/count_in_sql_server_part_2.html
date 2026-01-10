@@ -10,7 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../css/posts.css">
+    <link rel="stylesheet" href="../../css/posts.css">
 </head>
 
 <body>
@@ -22,7 +22,7 @@
             <header class="article-header">
                 <div class="article-meta">Technical Article • SQL Server</div>
                 <h1>COUNT() function in SQL Server (Part 2)</h1>
-                <img src="../img/count_in_sql_server_thumbnail.png" alt="COUNT() function in SQL Server (Part 2)"
+                <img src="../../img/count_in_sql_server_thumbnail.png" alt="COUNT() function in SQL Server (Part 2)"
                     class="article-thumbnail">
                 <p class="article-intro">
                     In the <a href="count_in_sql_server.html">previous article</a>, we together explored the COUNT(1)
@@ -43,7 +43,7 @@
                     execution plan between COUNT(ID), COUNT(1), and COUNT(*).
                 </p>
 
-                <img src="../img/count_in_sql_server_2_1.png" alt="Execution Plan">
+                <img src="../../img/count_in_sql_server_2_1.png" alt="Execution Plan">
                 <p class="image-caption">Execution Plan</p>
 
                 <p>
@@ -52,7 +52,7 @@
                     the query profile.
                 </p>
 
-                <img src="../img/count_in_sql_server_2_2.png" alt="Query profile">
+                <img src="../../img/count_in_sql_server_2_2.png" alt="Query profile">
                 <p class="image-caption">Query profile</p>
 
                 <p>
@@ -60,7 +60,7 @@
                     about I/O stats?
                 </p>
 
-                <img src="../img/count_in_sql_server_2_3.png" alt="I/O Stats">
+                <img src="../../img/count_in_sql_server_2_3.png" alt="I/O Stats">
                 <p class="image-caption">I/O Stats</p>
 
                 <p>Both queries scanned 3820 pages.</p>
@@ -71,7 +71,7 @@
                     What if I try to use the COUNT function on a non-PK column? Let's check the result first.
                 </p>
 
-                <img src="../img/count_in_sql_server_2_4.png" alt="Query result">
+                <img src="../../img/count_in_sql_server_2_4.png" alt="Query result">
                 <p class="image-caption">Query result</p>
 
                 <p>
@@ -79,7 +79,7 @@
                     column is nullable. And there is 1 null value in that column.
                 </p>
 
-                <img src="../img/count_in_sql_server_2_5.png" alt="Null value count">
+                <img src="../../img/count_in_sql_server_2_5.png" alt="Null value count">
                 <p class="image-caption">Null value count</p>
 
                 <p>
@@ -97,7 +97,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="../js/post_layout.js"></script>
+    <script src="../../js/post_layout.js"></script>
 </body>
 
 </html>
