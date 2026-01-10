@@ -4,7 +4,7 @@ December 4, 2025
 
 15 years ago, someone asked this on StackOverflow:
 
-![StackOverflow Question](../../img/PRODUCT_SQL_Server_1.png)
+![StackOverflow Question](../../img/PRODUCT_SQL_Server_2.png)
 
 I don't know if Microsoft heard this guy's desire, but they DID release the new aggregate PRODUCT function in SQL Server 2025.
 
@@ -33,7 +33,7 @@ If I use the SUM function, I'll get the calculation: 1+2+3+4=10. Everyone knows.
 
 The PRODUCT function works similarly. The calculation is now 1*2*3*4=24.
 
-![PRODUCT Function Example](../../img/PRODUCT_SQL_Server_2.png)
+![PRODUCT Function Example](../../img/PRODUCT_SQL_Server_3.png)
 
 ## Why do we need this?
 
@@ -74,19 +74,19 @@ WHERE country = 'UK';
 
 I get a similar result due to rounding, but I'd argue this is much easier to read.
 
-![Inflation Calculation](../../img/PRODUCT_SQL_Server_3.png)
+![Inflation Calculation](../../img/PRODUCT_SQL_Server_4.png)
 
 ## PRODUCT Syntax and Usage
 
 According to Microsoft, the syntax is quite simple. There is 1 required parameter, it's the expression. The ALL and DISTINCT keywords are optional. If you want to use it as a window function, the OVER keyword is available.
 
-![PRODUCT Syntax](../../img/PRODUCT_SQL_Server_4.png)
+![PRODUCT Syntax](../../img/PRODUCT_SQL_Server_5.png)
 
 ### ALL and DISTINCT
 
 ALL is used by default. That means there's no difference between using ALL and not using it. But there will be if you use the DISTINCT keyword. Now I'll add a new "4" value to the Number table above, then compare them.
 
-![ALL vs DISTINCT](../../img/PRODUCT_SQL_Server_5.png)
+![ALL vs DISTINCT](../../img/PRODUCT_SQL_Server_6.png)
 
 You can see the difference here. The DISTINCT keyword makes the function return 1*2*3*4=24 instead of 1*2*3*4*4=96. It eliminated the duplicates before calculating.
 

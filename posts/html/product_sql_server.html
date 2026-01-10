@@ -34,7 +34,7 @@
             <div class="article-content">
                 <p>15 years ago, someone asked this on StackOverflow:</p>
 
-                <img src="../../img/PRODUCT_SQL_Server_1.png" alt="StackOverflow Question">
+                <img src="../../img/PRODUCT_SQL_Server_2.png" alt="StackOverflow Question">
                 <p class="image-caption">StackOverflow question about PRODUCT function</p>
 
                 <p>I don't know if Microsoft heard this guy's desire, but they DID release the new aggregate PRODUCT
@@ -63,7 +63,7 @@ VALUES
                 <p>If I use the SUM function, I'll get the calculation: 1+2+3+4=10. Everyone knows.</p>
                 <p>The PRODUCT function works similarly. The calculation is now 1*2*3*4=24.</p>
 
-                <img src="../../img/PRODUCT_SQL_Server_2.png" alt="PRODUCT Function Example">
+                <img src="../../img/PRODUCT_SQL_Server_3.png" alt="PRODUCT Function Example">
                 <p class="image-caption">PRODUCT function example</p>
 
                 <h2>Why do we need this?</h2>
@@ -103,7 +103,7 @@ WHERE country = 'UK';</code></pre>
 
                 <p>I get a similar result due to rounding, but I'd argue this is much easier to read.</p>
 
-                <img src="../../img/PRODUCT_SQL_Server_3.png" alt="Inflation Calculation">
+                <img src="../../img/PRODUCT_SQL_Server_4.png" alt="Inflation Calculation">
                 <p class="image-caption">Inflation calculation using PRODUCT</p>
 
                 <h2>PRODUCT Syntax and Usage</h2>
@@ -111,7 +111,7 @@ WHERE country = 'UK';</code></pre>
                     expression. The ALL and DISTINCT keywords are optional. If you want to use it as a window function,
                     the OVER keyword is available.</p>
 
-                <img src="../../img/PRODUCT_SQL_Server_4.png" alt="PRODUCT Syntax">
+                <img src="../../img/PRODUCT_SQL_Server_5.png" alt="PRODUCT Syntax">
                 <p class="image-caption">PRODUCT function syntax</p>
 
                 <h3>ALL and DISTINCT</h3>
@@ -119,7 +119,7 @@ WHERE country = 'UK';</code></pre>
                     there will be if you use the DISTINCT keyword. Now I'll add a new "4" value to the Number table
                     above, then compare them.</p>
 
-                <img src="../../img/PRODUCT_SQL_Server_5.png" alt="ALL vs DISTINCT">
+                <img src="../../img/PRODUCT_SQL_Server_6.png" alt="ALL vs DISTINCT">
                 <p class="image-caption">Comparing ALL and DISTINCT</p>
 
                 <p>You can see the difference here. The DISTINCT keyword makes the function return 1*2*3*4=24 instead of
