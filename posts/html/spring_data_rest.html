@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get rid of deprecated Services and RestControllers in SpringBoot - The Nguyen Khac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../css/posts.css">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container">
+        <article>
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-meta">Spring Boot • REST API</div>
+                <h1>Get rid of deprecated Services and RestControllers in SpringBoot, why and how?</h1>
+                <img src="../../img/Spring_Data_REST_thumbnail.png" alt="Spring Data REST Thumbnail"
+                    class="article-thumbnail">
+                <p class="article-intro">
+                    Simplify your Spring Boot applications by eliminating repetitive controllers and services using
+                    Spring Data REST.
+                </p>
+                <p><em>July 27, 2025</em></p>
+            </header>
+
+            <!-- Article Content -->
+            <div class="article-content">
+                <h2>What are the problems?</h2>
+                <p>In typical Spring-based applications, you will see the following architecture:</p>
+
+                <img src="../../img/Spring_Data_REST_1.png" alt="Traditional Spring Architecture">
+                <p class="image-caption">Traditional Spring Architecture</p>
+
+                <p>That means, for every single endpoint, whether it's easy like simple CRUD, or hard ones like creating
+                    a report, you will have to create the Controller to handle the endpoints: GET, POST, PUT/PATCH,
+                    DELETE.</p>
+                <p>Then you will have to repeat it on another one, and another one, and another one... But still,
+                    hundreds of entities are waiting for the endpoint. And when you have a new entity, you will have to
+                    repeat all those steps manually. It's a real hell with no exit.</p>
+
+                <h2>Solutions</h2>
+
+                <img src="../../img/Spring_Data_REST_2.png" alt="Spring Data REST Solution">
+                <p class="image-caption">Spring Data REST Solution</p>
+
+                <p>Imagine you could remove all the REST controllers. You could remove all of the unnecessary services.
+                    After declaring an entity, your only task is to create a JPA Repository to handle it (by extending
+                    the JPARepository interface). Nothing more. Sounds like a dream, doesn't it?</p>
+                <p>But it's possible, by using <strong>Spring Data REST</strong>.</p>
+
+                <img src="../../img/Spring_Data_REST_3.png" alt="Spring Data REST Architecture">
+                <p class="image-caption">Spring Data REST Architecture</p>
+
+                <h3>What Spring Data REST does:</h3>
+                <ul>
+                    <li>It scans your project for JpaRepository</li>
+                    <li>It exposes REST APIs for each entity type for your JpaRepository</li>
+                    <li>It creates endpoints based on the entity type with a simple pluralized form: change the entity
+                        type's first character to lowercase, then add "s" to the end.</li>
+                </ul>
+                <p>Everything is done automatically. No controllers. No services. No pain in the ass anymore.</p>
+
+                <h2>How can we do that?</h2>
+                <p>When you create a Spring Boot project, remember to add <code>spring-data-rest</code> to the
+                    dependency list:</p>
+
+                <img src="../../img/Spring_Data_REST_4.png" alt="Adding Spring Data REST Dependency">
+                <p class="image-caption">Adding Spring Data REST Dependency</p>
+
+                <p>Here I want to use Swagger (OpenAPI) to show you the result, so I'll create the OpenApiConfig class:
+                </p>
+                <pre><code>package com.example.noctrl.configuration;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info().title("My API Without Controllers")
+                        .version("1.0")
+                        .description("This is a sample API documented without traditional Spring MVC controllers.")
+                        .termsOfService("http://swagger.io/terms/")
+                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
+    }
+}</code></pre>
+
+                <p>A simple entity class is enough for an example:</p>
+                <pre><code>@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Data
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}</code></pre>
+
+                <p>We have an entity, sure we'll need a Repository interface:</p>
+
+                <img src="../../img/Spring_Data_REST_5.png" alt="Creating Repository Interface">
+                <p class="image-caption">Creating Repository Interface</p>
+
+                <p>Extending the JpaRepository brings you enough simple CRUD features. But if you want something more,
+                    feel free to write it in the interface, just like this:</p>
+                <pre><code>public interface ProductRepository extends JpaRepository&lt;Product, Long&gt; {
+    List&lt;Product&gt; findAllByName(String name);
+}</code></pre>
+
+                <p>Don't forget the application.properties configuration:</p>
+
+                <img src="../../img/Spring_Data_REST_6.png" alt="Application Properties Configuration">
+                <p class="image-caption">Application Properties Configuration</p>
+
+                <p>Then it's ready to go. You can start the program, then go to the swagger-ui to see the result:</p>
+
+                <img src="../../img/Spring_Data_REST_7.png" alt="Swagger UI Result 1">
+                <p class="image-caption">Swagger UI showing auto-generated endpoints</p>
+
+                <img src="../../img/Spring_Data_REST_8.png" alt="Swagger UI Result 2">
+                <p class="image-caption">Detailed endpoint documentation</p>
+
+                <p>Now, let's try it by yourself. Happy coding, my fellow brothers.</p>
+            </div>
+        </article>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/post_layout.js"></script>
+</body>
+
+</html>

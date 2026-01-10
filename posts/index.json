@@ -1,6 +1,13 @@
 {
     "posts": [
         {
+            "title": "Get rid of deprecated Services and RestControllers in SpringBoot, why and how?",
+            "file": "spring_data_rest.md",
+            "date": "2025-07-27",
+            "thumbnail": "img/Spring_Data_REST_thumbnail.png",
+            "excerpt": "Simplify your Spring Boot applications by eliminating repetitive controllers and services using Spring Data REST."
+        },
+        {
             "title": "How can parameters stop SQL injection?",
             "file": "parameters_prevent_sql_injection.md",
             "date": "2025-05-22",
